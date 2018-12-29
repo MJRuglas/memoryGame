@@ -63,65 +63,66 @@ function shuffle(array) {
 function initializeGame() {
 "use strict";
 var deck = document.querySelector('.deck');
-	
+
 var cardHTML = shuffle(cards).map(function(card) {
 return createCard(card);
 });
 
-	
-deck.innerHTML = cardHTML.join('');
-	
-	
-}
 
-//Start Game
-initializeGame();
+deck.innerHTML = cardHTML.join('');
+
 
 //Local variables
 var fullCards = document.querySelectorAll('.card');
 var flipCards = [];
 var matchedCards = [];
-var deck = document.querySelector('.deck');
 
 //Set up event listener
 fullCards.forEach(function(card) {
-	"use strict";
 	card.addEventListener('click', function(e) {
-		
+
 		if(!card.classList.contains('open') && !card.classList.contains('show') && !card.classList.contains('match')){
 		flipCards.push(card);
 	    card.classList.add('open', 'show', 'disable');
-			
+
 			//Checking for a match
 			if (flipCards.length === 2) {
+
+				//Adding moves
+				moves += 1;
+				moveCounter.innerHTML = moves;
+
+				//Start timer
+				 timer();
+
 				if (flipCards[0].dataset.card === flipCards[1].dataset.card){
-					
+
 					//When Cards Match
 					flipCards[0].classList.add('match');
 					flipCards[1].classList.add('match');
-					
+
 					matchedCards.push(flipCards[0], flipCards[1]);
-					
+
 					flipCards = [];
-					
+
 					//Check all cards are matched and end game
 					gameOver();
-					
+
+					//Stop timer
+					resetTimer();
+
 					} else {
-						
+
 					//When there is no match, flip cards
 					setTimeout(function() {
 					flipCards.forEach(function(card){
 					card.classList.remove('open','show','disable');
 					});
-					
+
 					flipCards = [];
 				}, 1000);
 			}
-				//Adding moves
-				moves += 1;
-				moveCounter.innerHTML = moves;
-				
+
 				//Set Stars Rating
 				starsRating();
 		  }
@@ -129,6 +130,17 @@ fullCards.forEach(function(card) {
 	});
 });
 
+	function gameOver(){
+	if(matchedCards.length === cards.length){
+		alert("GAME OVER!");
+		console.log("I end the game!");
+	}
+}
+
+}
+
+//Start Game
+initializeGame();
 
 //Adding move counter
 var moveCounter = document.querySelector('.moves');
@@ -137,39 +149,64 @@ moveCounter.innerHTML = 0;
 function moveCounter(){
 	"use strict";
 	moves++;
+	if(moves === 2){
+		second = 0;
+		minute = 0;
+	}
+}
+
+//Create Timer
+let second = 0, minute = 0;
+let timeStart = document.querySelector('.timekeeper');
+let time;
+timeStart.innerHTML = minute+ " mins  "+second+ " secs";
+
+function timer(){
+	time = setInterval(function(){
+	  timeStart.innerHTML = minute+" mins "+second+" secs";
+		second++;
+		if(second === 60){
+		   minute++;
+			 second = 0;
+		}
+	}, 1000);
+}
+
+function resetTimer(){
+	let timeStart = document.querySelector('.timekeeper');
+  timeStart.innerHTML = "0 mins 0 secs";
+	clearInterval(timer);
 }
 
 //Generate Stars
 var stars = document.querySelector(".stars");
 function starsRating(){
 	"use strict";
-	if(moves > 12){
-		stars.innerHTML = `<li><i class="fa fa-star"></i></li>
+	if(moves >= 12){
+		stars.innerHTML = `<li><p class="rating">RATING: </p></li>
+		        <li><i class="fa fa-star"></i></li>
         		<li><i class="fa fa-star"></i></li>
-				<li><i class="fa fa-star"></i></li>`;
+				    <li><i class="fa fa-star"></i></li>`;
 	}
-	
-	if(moves > 16){
-		stars.innerHTML = `<li><i class="fa fa-star"></i></li>
+
+	if(moves >= 16){
+		stars.innerHTML = `<li><p class="rating">RATING: </p></li>
+		        <li><i class="fa fa-star"></i></li>
         		<li><i class="fa fa-star"></i></li>`;
-	} 
-	
-	if(moves > 18){
-		stars.innerHTML = `<li><i class="fa fa-star"></i>`;
 	}
-	
+
+	if(moves >= 18){
+		stars.innerHTML = `<li><p class="rating">RATING: </p></li>
+		        <li><i class="fa fa-star"></i>`;
+	}
+
 }
 
 //Implementing game over message and function when all cards are matched.
-function gameOver(){
-	"use strict";
-	if(matchedCards.length === cards.length){
-		alert("GAME OVER!");
-	}
-}
+var matchedCards = [];
 
 //Implementing restart game Button
-
+var deck = document.querySelector('.deck');
 var restartButton;
 
 restartButton = document.getElementById("restartB");
@@ -179,28 +216,36 @@ console.log("event listener working");
 function restartGame(){
 	"use strict";
 	console.log("I am also working");
-	
+
 	//Empty all cards array
 	deck.innerHTML = "";
-	console.log("I delete cards");
-	
+	console.log("I empty the cards");
+
 	//Start New Game
 	initializeGame();
     console.log("I re-start the game");
-	
+
 	//Reset variables
 	matchedCards = [];
-	
+
+	//Reset Timer
+	resetTimer();
+	second = 0;
+	minute = 0;
+
 	//Reset Counter
 	moves = 0;
 	moveCounter.innerHTML = moves;
-	
+
 	//Reset Stars
-	stars.innerHTML = `<li><i class="fa fa-star"></i></li>
-        		<li><i class="fa fa-star"></i></li>
+	stars.innerHTML = `<li><p class="rating">RATING: </p></li>
+	      <li><i class="fa fa-star"></i></li>
+        <li><i class="fa fa-star"></i></li>
 				<li><i class="fa fa-star"></i></li>
 				<li><i class="fa fa-star"></i></li>
 				<li><i class="fa fa-star"></i></li>`;
-		
-}
 
+	//Re-start the timer
+
+
+}
