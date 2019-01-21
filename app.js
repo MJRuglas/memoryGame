@@ -70,8 +70,8 @@ return createCard(card);
 
 
 deck.innerHTML = cardHTML.join('');
-
-
+	
+	
 //Local variables
 var fullCards = document.querySelectorAll('.card');
 var flipCards = [];
@@ -85,6 +85,7 @@ fullCards.forEach(function(card) {
 		flipCards.push(card);
 	    card.classList.add('open', 'show', 'disable');
 
+			
 			//Checking for a match
 			if (flipCards.length === 2) {
 
@@ -92,8 +93,7 @@ fullCards.forEach(function(card) {
 				moves += 1;
 				moveCounter.innerHTML = moves;
 
-				//Start timer
-				 timer();
+				
 
 				if (flipCards[0].dataset.card === flipCards[1].dataset.card){
 
@@ -109,7 +109,7 @@ fullCards.forEach(function(card) {
 					gameOver();
 
 					//Stop timer
-					resetTimer();
+					//resetTimer();
 
 					} else {
 
@@ -125,22 +125,57 @@ fullCards.forEach(function(card) {
 
 				//Set Stars Rating
 				starsRating();
+
 		  }
 		}
 	});
 });
-
+	
+	//Define star rating for alert box here
+	let rating = 5;
+	function starsFound(){
+		
+	if(stars.innerHTML === `<li><p class="rating">RATING: </p></li>
+	            <li><i class="fa fa-star"></i></li>
+                <li><i class="fa fa-star"></i></li>
+				<li><i class="fa fa-star"></i></li>
+				<li><i class="fa fa-star"></i></li>
+				<li><i class="fa fa-star"></i></li>`){
+		        rating = 5;
+	          }
+		
+	 if(stars.innerHTML === `<li><p class="rating">RATING: </p></li>
+		                   <li><i class="fa fa-star"></i></li>
+        		           <li><i class="fa fa-star"></i></li>
+				           <li><i class="fa fa-star"></i></li>`){
+		        rating = 3;
+	          }	
+		
+	 if(stars.innerHTML === `<li><p class="rating">RATING: </p></li>
+		                   <li><i class="fa fa-star"></i>`){
+		        rating = 1;
+	          }	
+    }
+	
+	//When Player wins the game and the game is over, this happens.
 	function gameOver(){
+		let timekeeps = minute+ " mins  "+second+ " secs";
+		let starRates = starsFound();
+	
+   //Create alert here
 	if(matchedCards.length === cards.length){
-		alert("GAME OVER!");
+		alert("Congrats! You've won the game in " +timekeeps+ " time and with a " +starRates+ " rating. Press 'OK' and hit reset to play again.");
 		console.log("I end the game!");
+		clearInterval(time); 
 	}
-}
-
+		
+  }
+	
 }
 
 //Start Game
 initializeGame();
+
 
 //Adding move counter
 var moveCounter = document.querySelector('.moves');
@@ -149,32 +184,36 @@ moveCounter.innerHTML = 0;
 function moveCounter(){
 	"use strict";
 	moves++;
-	if(moves === 2){
-		second = 0;
-		minute = 0;
-	}
 }
+
 
 //Create Timer
 let second = 0, minute = 0;
 let timeStart = document.querySelector('.timekeeper');
-let time;
 timeStart.innerHTML = minute+ " mins  "+second+ " secs";
 
 function timer(){
-	time = setInterval(function(){
-	  timeStart.innerHTML = minute+" mins "+second+" secs";
+    if(moves > 0) {
+		timeStart.innerHTML = minute+" mins "+second+" secs";
 		second++;
 		if(second === 60){
 		   minute++;
 			 second = 0;
 		}
-	}, 1000);
+ }
 }
 
+
+//Starts the timer
+let time = setInterval(function() {
+  timer();
+}, 1000);
+
+
+//Reset timer
 function resetTimer(){
 	let timeStart = document.querySelector('.timekeeper');
-  timeStart.innerHTML = "0 mins 0 secs";
+    timeStart.innerHTML = "0 mins 0 secs";
 	clearInterval(timer);
 }
 
@@ -184,20 +223,20 @@ function starsRating(){
 	"use strict";
 	if(moves >= 12){
 		stars.innerHTML = `<li><p class="rating">RATING: </p></li>
-		        <li><i class="fa fa-star"></i></li>
-        		<li><i class="fa fa-star"></i></li>
-				    <li><i class="fa fa-star"></i></li>`;
+		                   <li><i class="fa fa-star"></i></li>
+        		           <li><i class="fa fa-star"></i></li>
+				           <li><i class="fa fa-star"></i></li>`;
 	}
 
 	if(moves >= 16){
 		stars.innerHTML = `<li><p class="rating">RATING: </p></li>
-		        <li><i class="fa fa-star"></i></li>
-        		<li><i class="fa fa-star"></i></li>`;
+		                   <li><i class="fa fa-star"></i></li>
+        		           <li><i class="fa fa-star"></i></li>`;
 	}
 
 	if(moves >= 18){
 		stars.innerHTML = `<li><p class="rating">RATING: </p></li>
-		        <li><i class="fa fa-star"></i>`;
+		                   <li><i class="fa fa-star"></i>`;
 	}
 
 }
@@ -239,13 +278,10 @@ function restartGame(){
 
 	//Reset Stars
 	stars.innerHTML = `<li><p class="rating">RATING: </p></li>
-	      <li><i class="fa fa-star"></i></li>
-        <li><i class="fa fa-star"></i></li>
+	            <li><i class="fa fa-star"></i></li>
+                <li><i class="fa fa-star"></i></li>
 				<li><i class="fa fa-star"></i></li>
 				<li><i class="fa fa-star"></i></li>
 				<li><i class="fa fa-star"></i></li>`;
-
-	//Re-start the timer
-
 
 }
